@@ -56,7 +56,7 @@ func main() {
 	for _, v := range strings.Split(os.Getenv("FORM_DATA"), ";") {
 		vals := strings.Split(v, "-")
 		if len(vals) != 5 {
-			println("wrong form data", v, "must match CITY_ID-STREET_ID-HOUSE_ID-NAME-HOUSE_NUM")
+			println("wrong form data", v, "must match CITY_ID-STREET_ID-HOUSE_ID-STREET_NAME-HOUSE_NUM")
 			continue
 		}
 
