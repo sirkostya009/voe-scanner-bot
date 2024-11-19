@@ -10,6 +10,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	css "github.com/andybalholm/cascadia"
 	tg "github.com/mymmrac/telego"
@@ -90,14 +91,26 @@ func main() {
 		tomorrow[res.Addr] = parseTimes(doc, tomorrowQuery)
 	}
 
-	for _, s := range [...]string{makeReport(today, "сьодні"), makeReport(tomorrow, "завтра")} {
+	todaysReport, _ := makeReport(today, "сьодні")
+	tomorowsReport, tomorrowEmpty := makeReport(tomorrow, "завтра")
+
+	_, err = bot.SendMessage(&tg.SendMessageParams{
+		ChatID:    tg.ChatID{ID: chatId},
+		Text:      todaysReport,
+		ParseMode: tg.ModeMarkdownV2,
+	})
+	if err != nil {
+		println("failed to send today's report to telegram", err.Error())
+	}
+
+	if h := time.Now().UTC().Hour(); h >= 18 || (!tomorrowEmpty && h > 12) { // send tomorrow only during the day if available or evening
 		_, err = bot.SendMessage(&tg.SendMessageParams{
 			ChatID:    tg.ChatID{ID: chatId},
-			Text:      s,
+			Text:      tomorowsReport,
 			ParseMode: tg.ModeMarkdownV2,
 		})
 		if err != nil {
-			println("failed to send message to telegram", err.Error())
+			println("failed to send tomorrow's report to telegram", err.Error())
 		}
 	}
 }
@@ -157,10 +170,11 @@ func parseTimes(doc *html.Node, query css.Selector) (t []Time) {
 	return
 }
 
-func makeReport(times map[VoeAddress][]Time, day string) string {
+func makeReport(times map[VoeAddress][]Time, day string) (string, bool) {
 	buf := strings.Builder{}
 	buf.Grow(300 * len(times))
 	buf.WriteString(fmt.Sprintf("Вижимка на %s:\n\n", day))
+	emptyCount := 0
 
 	for _, addr := range slices.SortedFunc(maps.Keys(times), voeSort) {
 		buf.WriteString(fmt.Sprintf("*%s, %s*:\n", addr.Street, addr.House))
@@ -175,13 +189,14 @@ func makeReport(times map[VoeAddress][]Time, day string) string {
 		}
 
 		if len(times[addr]) == 0 {
+			emptyCount += 1
 			buf.WriteString("ВІДКЛЮЧЕНЬ НЕМАААА\\!\\!\\!\\!\\!\n")
 		}
 
 		buf.WriteRune('\n')
 	}
 
-	return buf.String()
+	return buf.String(), len(times) == emptyCount
 }
 
 func voeSort(a, b VoeAddress) int {
