@@ -52,7 +52,6 @@ func main() {
 	}
 
 	var voeAddresses []VoeAddress
-	// 510100000-1294-33688-вулиця Зодчих-36;520680503-32674-600961-провулок Зоряний-2;510100000-1134-50887-вулиця Бортняка-2
 	for _, v := range strings.Split(os.Getenv("FORM_DATA"), ";") {
 		vals := strings.Split(v, "-")
 		if len(vals) != 5 {
@@ -176,7 +175,7 @@ func makeReport(times map[VoeAddress][]Time, day string) string {
 		}
 
 		if len(times[addr]) == 0 {
-			buf.WriteString("ВІДКЛЮЧЕНЬ НЕМАААА!!!!!\n")
+			buf.WriteString("ВІДКЛЮЧЕНЬ НЕМАААА\\!\\!\\!\\!\\!\n")
 		}
 
 		buf.WriteRune('\n')
