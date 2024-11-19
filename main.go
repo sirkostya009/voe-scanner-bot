@@ -166,7 +166,7 @@ func makeReport(times map[VoeAddress][]Time, day string) string {
 		buf.WriteString(fmt.Sprintf("*%s, %s*:\n", addr.Street, addr.House))
 
 		for _, time := range times[addr] {
-			buf.WriteString(fmt.Sprintf("`%d:00\\-%d:00`", time.StartTime, time.EndTime))
+			buf.WriteString(fmt.Sprintf("`%02d:00—%02d:00`", time.StartTime, time.EndTime))
 			if time.Confirmed {
 				buf.WriteString(" \\(підтверджено\\)")
 			}
