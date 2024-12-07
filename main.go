@@ -113,6 +113,8 @@ func main() {
 			println("failed to send tomorrow's report to telegram", err.Error())
 		}
 	}
+
+	fmt.Println("done")
 }
 
 func request(ch chan<- VoeResult, addr VoeAddress) {
