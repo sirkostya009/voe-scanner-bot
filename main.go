@@ -33,8 +33,8 @@ type Time struct {
 }
 
 var (
-	todayQuery    = css.MustCompile(".disconnection-detailed-table-container div:nth-child(n+27):nth-child(-n+50)")
-	tomorrowQuery = css.MustCompile(".disconnection-detailed-table-container div:nth-child(n+52):nth-child(-n+75)")
+	todayQuery    = css.MustCompile(".disconnection-detailed-table-container div:nth-child(n+27):nth-child(-n+50) > div")
+	tomorrowQuery = css.MustCompile(".disconnection-detailed-table-container div:nth-child(n+52):nth-child(-n+75) > div")
 )
 
 func main() {
